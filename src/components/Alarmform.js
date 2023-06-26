@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import moment from "moment-timezone";
 
-export default function Alarmform({ addAlarm }) {
+export default function AlarmForm({ addAlarm }) {
   const [alarm, setAlarm] = useState({
     time: "",
     day: {

@@ -1,6 +1,6 @@
 import React,{useState,useEffect} from "react";
-
-export default function AlarmList({}) {
+import AlarmItem from './Alarmitem'
+export default function AlarmList() {
     const [alarmList,setAlarmList] = useState([]);
 
     useEffect(()=>{
