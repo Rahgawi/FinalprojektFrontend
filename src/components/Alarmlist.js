@@ -1,5 +1,7 @@
 import React,{useState,useEffect} from "react";
 import AlarmItem from './Alarmitem'
+
+
 export default function AlarmList() {
     const [alarmList,setAlarmList] = useState([]);
 
@@ -16,6 +18,12 @@ export default function AlarmList() {
             console.log('Error fetching alarm list:', error);
         }
     };
+
+    const addAlarm = (newAlarm) =>{
+        const generatedId = Math.random().toString(36).substr(2,9);
+        const updatedAlarmList = [...AlarmList, {id: generatedId, ... newAlarm }];
+        setAlarmList(updatedAlarmList);
+      };
 
     const updateAlarm = async (id,updatedAlarm)=>{
         try {

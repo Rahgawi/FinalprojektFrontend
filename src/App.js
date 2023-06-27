@@ -1,21 +1,20 @@
 
 import './App.css';
-import { Routes, Route } from 'react-router-dom';
+import {  Routes ,Route } from 'react-router-dom';
 import Alarms from './pages/Alarms';
-import AlarmForm from './components/Alarmform';
 
-function App() {
+export default function App() {
   return(
-    <div>
-
-<Routes>
-        <Route path="/" element={<Alarms />} />
-        <Route path="/:id" element={<AlarmForm />} />
+  
+      <div>
+        <h1>HolidayBreak</h1>
+        <Routes>
+        <Route path="/" component={Alarms} />
         
-      
-</Routes>
-    </div>
+        </Routes>
+      </div>
+    
   )
 }
 
-export default App;
+
