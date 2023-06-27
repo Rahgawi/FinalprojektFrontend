@@ -1,9 +1,11 @@
 import React,{useState,useEffect} from "react";
 import AlarmItem from './Alarmitem'
-
+import Alarmform from "./Alarmform";
 
 export default function AlarmList() {
     const [alarmList,setAlarmList] = useState([]);
+
+    console.log("alarmList",alarmList);
 
     useEffect(()=>{
         fetchAlarmList();
@@ -11,7 +13,7 @@ export default function AlarmList() {
 
     const fetchAlarmList = async() =>{
         try {
-            const res = await fetch('https://localhost:8080/alarm');
+            const res = await fetch('http://localhost:8080/alarm');
             const data = await res.json();
             setAlarmList(data);
         } catch (error) {
@@ -76,6 +78,7 @@ export default function AlarmList() {
             
 
             ))}
+            <Alarmform alarmList={alarmList} setAlarmList={setAlarmList} addAlarm={addAlarm}/>
         </div>
     );
 };

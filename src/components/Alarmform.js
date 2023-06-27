@@ -1,7 +1,12 @@
 import React, { useState } from "react";
 
 
-export default function AlarmForm({ addAlarm }) {
+export default function AlarmForm({setAlarmList, addAlarm}) {
+
+  const addAlarmToList = (newAlarm) =>{
+    setAlarmList((prevAlarmList) => [...prevAlarmList,newAlarm]);
+};
+
   const [alarm, setAlarm] = useState({
     time: "",
     day: {
@@ -96,8 +101,8 @@ export default function AlarmForm({ addAlarm }) {
 
   return (
     <div>
-      <h2>New Alarm</h2>
-      <form onSubmit={handleSubmit}>
+      <h2>New Alarm / Alarm Form</h2>
+        <form onSubmit={handleSubmit}>
         <label htmlFor="time">Time:</label>
         <input
           type="text"
@@ -107,7 +112,7 @@ export default function AlarmForm({ addAlarm }) {
         />
 
         <label>Day:</label>
-        {Object.key(alarm.day).map((day) => (
+        {Object.keys(alarm.day).map((day) => (
           <div key={day}>
             <label htmlFor={day}>
               <input
@@ -145,7 +150,7 @@ export default function AlarmForm({ addAlarm }) {
           Play
         </button>
         <button type="submit">Add</button>
-      </form>
+      </form>  
     </div>
   );
 };

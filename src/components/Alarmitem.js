@@ -36,7 +36,7 @@ const handleChange =(e) => {
 };
 
 const handleEditClick =() =>{
-    navigate.push(`/alarm/${alarm._id}/edit`);
+    navigate(`/alarm/${alarm._id}/edit`);
 };
 
 return (
