@@ -1,10 +1,10 @@
 import React, { useContext } from "react";
 import "./DigitalClock.css";
-import { AlarmContext } from "../context/ContextAlarm";
+import { StateContext } from "../context/stateContext";
 
  export default function DigitalClock() {
   const { hourDigital, minutesDigital, amPm, dayNow, monthNow, yearNow } =
-    useContext(AlarmContext);
+    useContext(StateContext);
 
   return (
     <div>
