@@ -1,7 +1,9 @@
 import React, { createContext, useEffect, useState } from "react";
+import axios from "axios";
 import months from "../../data";
 import Sound from "../../mixkit-casino-win-alarm-and-coins-1990.mp3";
 const alarm = new Audio(Sound);
+
 
 // const AlarmContext = createContext();
 
@@ -18,9 +20,10 @@ export default function StateContextProvider ({ children }) {
   const [alarmTime, setAlarmTime] = useState("");
   const [hasAlarm, setHasAlarm] = useState(false);
   const [slsrms,setAlarms] =useState([]);
+  const [alarmList, setAlarmList] = useState([]);
 
 
-  
+
   
 
   useEffect(() => {
@@ -53,16 +56,41 @@ export default function StateContextProvider ({ children }) {
       setYearNow(year);
     }, 1000);
   }, []);
+   useEffect(()=>{
+    fetchAlarmList();
+   },[]);
 
-  if (alarmTime === `${hourDigital}:${minutesDigital} ${amPm}`) {
-    alarm.play();
-    alarm.loop = true;
-  }
+   const fetchAlarmList = async () => {
+    try {
+      const res = await fetch("http://localhost:5002/alarms");
+      const data = await res.json();
+      setAlarmList(data);
+    } catch (error) {
+      console.log('Error fetching alarm list:', error);
+    }
+  };
+
+  const toggleAlarm = async (id, isActive) => {
+    try {
+      await axios.patch(`http://localhost:5002/alarms/${id}`, { isActive });
+      fetchAlarmList();
+    } catch (error) {
+      console.log('Error toggling alarm:', error);
+    }
+  };
+
+
+  
 
   const pauseAlarm = () => {
     alarm.pause();
     setAlarmTime("");
   };
+
+  if (alarmTime === `${hourDigital}:${minutesDigital} ${amPm}`) {
+    alarm.play();
+    alarm.loop = true;
+  }
 
   return (
     <StateContext.Provider
@@ -78,6 +106,9 @@ export default function StateContextProvider ({ children }) {
         pauseAlarm,
         hasAlarm,
         setHasAlarm,
+        alarmList,
+        fetchAlarmList,
+        toggleAlarm,
       }}
     >
       {children}

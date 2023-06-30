@@ -19,21 +19,13 @@ export default function AlarmOption() {
   //onChange of input checkbox, setSelectedDays(...prev, e.target.value)
 
   const addAlarm = async () => {
-    //hier anstatt eines Objeketes einen State nutzen
-    // 1. on checkbox change = add days to state
-    // selectedDays > sollte initial leeres Array sein
-    // jedes Inputfeld/checkbox sollte ein event haben
-    //wenn checkbox gecheckt ist, dann value (day) zum array mit hinzufügen
-    // const selectedDays = Array.from(document.querySelectorAll('input[type=checkbox]:checked')).map(
-    //   (checkbox) => checkbox.value
-    // );
-
-
+   
     try {
 
       const alarm ={
         time: `${hour}:${minutes} ${amPmOption}`,
         days: selectedDays,
+        isActive:true,
       }
       await fetch("http://localhost:5002/alarms", {
         method: "POST",
@@ -45,6 +37,7 @@ export default function AlarmOption() {
 
      
     setAlarmTime(alarm.time);
+    setHasAlarm(true);
 
       console.log("Ausgewählte Tage:", selectedDays);
       

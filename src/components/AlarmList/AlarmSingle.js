@@ -1,50 +1,46 @@
-import React from 'react';
-import {StateContext} from "../context/stateContext";
-import { useContext, useState, useEffect } from 'react';
-import axios from 'axios';
+import React, { useContext } from 'react';
+import { StateContext } from "../context/stateContext";
+import { Swipeable } from "react-swipeable";
+// import "./AlarmSingle.css";
 
-export default function AlarmSingle() {
-  const { hourDigital, minutesDigital, amPm, dayNow, monthNow, yearNow, alarmTime, setAlarmTime, pauseAlarm, hasAlarm, setHasAlarm } = useContext(StateContext);
-  const [alarmSingle,setAlarmSingle] = useState([]);
- 
-  
-    // console.log("alarmList",alarmList);
-    const fetchsingleAlarm= async() =>{
-      try {
-          const res = await fetch('http://localhost:5002/alarms/id');
-          const data = await res.json();
-          setAlarmSingle(data);
-      } catch (error) {
-          console.log('Error fetching singleAlarm:', error);
-      }
-    }
-    
+export default function AlarmSingle({ alarm }) {
+  const { toggleAlarm, deleteAlarm } = useContext(StateContext);
 
-  
-
-  const formatTime = (time) => {
-    const date = new Date(time);
-    const hours = date.getHours();
-    const minutes = date.getMinutes();
-    const amPm = hours >= 12 ? 'PM' : 'AM';
-    const formattedHours = hours % 12 === 0 ? 12 : hours % 12;
-    const formattedMinutes = minutes < 10 ? `0${minutes}` : minutes;
-    return `${formattedHours}:${formattedMinutes} ${amPm}`;
+  const handleToggle = () => {
+    toggleAlarm(alarm._id, !alarm.isActive);
   };
 
-  
+  const handleSwipe = (event) => {
+    if (event.dir === "Left") {
+      toggleAlarm(alarm._id, false);
+    } else if (event.dir === "Right") {
+      toggleAlarm(alarm._id, true);
+    }
+  };
 
-    //get request endpoint "alarm" = get all alarms
-   return (
-      <div>
-      {alarmSingle.map((alarm) => (
-         <div key={alarm._id}>
-         <span> {formatTime(alarm.time)}
-         <p> {alarm.days}</p></span>
-         </div>
-      ))};
-      
+  const handleDelete = () => {
+    deleteAlarm(alarm._id);
+  };
+
+  return (
+    <Swipeable onSwiped={handleSwipe} className="alarm-item">
+      <div className={`alarm-content ${alarm.isActive ? "active" : "inactive"}`}>
+        <div className="alarm-details">
+          <span className="alarm-time">{alarm.time}</span>
+          <span className="alarm-days">{alarm.days.join(", ")}</span>
+        </div>
+        <div className="alarm-actions">
+          <button onClick={handleToggle} className={`toggle-button ${alarm.isActive ? "active" : ""}`}>
+            {alarm.isActive ? "Deactivate" : "Activate"}
+          </button>
+          <button onClick={handleDelete} className="delete-button">
+            Delete
+          </button>
+        </div>
       </div>
-    
- )
+    </Swipeable>
+  );
 }
+
+
+
