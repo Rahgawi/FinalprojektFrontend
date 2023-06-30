@@ -1,6 +1,6 @@
 import React, { useContext } from 'react';
 import { StateContext } from "../context/stateContext";
-import { Swipeable } from "react-swipeable";
+import { useSwipeable } from "react-swipeable";
 // import "./AlarmSingle.css";
 
 export default function AlarmSingle({ alarm }) {
@@ -10,21 +10,26 @@ export default function AlarmSingle({ alarm }) {
     toggleAlarm(alarm._id, !alarm.isActive);
   };
 
-  const handleSwipe = (event) => {
-    if (event.dir === "Left") {
-      toggleAlarm(alarm._id, false);
-    } else if (event.dir === "Right") {
-      toggleAlarm(alarm._id, true);
-    }
+  const handleSwipeLeft = () => {
+    toggleAlarm(alarm._id, false);
+  };
+
+  const handleSwipeRight = () => {
+    toggleAlarm(alarm._id, true);
   };
 
   const handleDelete = () => {
     deleteAlarm(alarm._id);
   };
 
+  const swipeHandlers = useSwipeable({
+    onSwipedLeft: handleSwipeLeft,
+    onSwipedRight: handleSwipeRight
+  });
+
   return (
-    <Swipeable onSwiped={handleSwipe} className="alarm-item">
-      <div className={`alarm-content ${alarm.isActive ? "active" : "inactive"}`}>
+    <div className={`alarm-item ${alarm.isActive ? "active" : "inactive"}`} {...swipeHandlers}>
+      <div className="alarm-content">
         <div className="alarm-details">
           <span className="alarm-time">{alarm.time}</span>
           <span className="alarm-days">{alarm.days.join(", ")}</span>
@@ -38,9 +43,10 @@ export default function AlarmSingle({ alarm }) {
           </button>
         </div>
       </div>
-    </Swipeable>
+    </div>
   );
 }
+
 
 
 
