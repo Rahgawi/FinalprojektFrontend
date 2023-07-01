@@ -1,131 +1,114 @@
-import React, { createContext, useEffect, useState } from "react";
-import axios from "axios";
-import months from "../../data";
+
 import Sound from "../../mixkit-casino-win-alarm-and-coins-1990.mp3";
-const alarm = new Audio(Sound);
-
-
-// const AlarmContext = createContext();
-
-export const StateContext = createContext({})
-
-export default function StateContextProvider ({ children }) {
-  
-  const [hourDigital, setHourDigital] = useState("");
-  const [minutesDigital, setMinutesDigital] = useState("");
-  const [amPm, setAmPm] = useState("");
-  const [dayNow, setDayNow] = useState("");
-  const [monthNow, setMonthNow] = useState("");
-  const [yearNow, setYearNow] = useState("");
-  const [alarmTime, setAlarmTime] = useState("");
-  const [hasAlarm, setHasAlarm] = useState(false);
-  const [slsrms,setAlarms] =useState([]);
-  const [alarmList, setAlarmList] = useState([]);
 
 
 
-  
+import React, { createContext, useState, useEffect } from "react";
+
+
+ export const StateContext = createContext();
+
+export default function StateContextProvider  ({ children })  {
+  const [alarms, setAlarms] = useState([]);
+  const [selectedAlarm, setSelectedAlarm] = useState(null);
 
   useEffect(() => {
-    setInterval(() => {
-      let date = new Date();
-
-      let HH = date.getHours(),
-        MM = date.getMinutes(),
-        day = date.getDate(),
-        month = date.getMonth(),
-        year = date.getFullYear(),
-        ampm;
-
-      if (HH >= 12) {
-        HH = HH - 12;
-        ampm = "PM";
-      } else {
-        ampm = "AM";
-      }
-
-      if (HH === 0) HH = 12;
-      if (HH < 10) HH = `0${HH}`;
-      if (MM < 10) MM = `0${MM}`;
-
-      setHourDigital(HH);
-      setMinutesDigital(MM);
-      setAmPm(ampm);
-      setDayNow(day);
-      setMonthNow(months[month]);
-      setYearNow(year);
-    }, 1000);
+    fetchAlarms();
   }, []);
-   useEffect(()=>{
-    fetchAlarmList();
-   },[]);
 
-   const fetchAlarmList = async () => {
+  const fetchAlarms = async () => {
     try {
-      const res = await fetch("http://localhost:5002/alarms");
-      const data = await res.json();
-      setAlarmList(data);
+      const response = await fetch('http://localhost:5002/alarms');
+      if (response.ok) {
+        const alarmsData = await response.json();
+        setAlarms(alarmsData);
+      } else {
+        throw new Error('Failed to fetch alarms.');
+      }
     } catch (error) {
-      console.log('Error fetching alarm list:', error);
+      console.error(error);
     }
   };
 
-  const toggleAlarm = async (id, isActive) => {
+  const createAlarm = async () => {
     try {
-      await axios.patch(`http://localhost:5002/alarms/${id}`, { isActive });
-      fetchAlarmList();
+      const response = await fetch('http://localhost:5002/alarms', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(alarms),
+      });
+
+      if (response.ok) {
+        const createdAlarm = await response.json();
+        setAlarms([...alarms, createdAlarm]);
+        return createdAlarm;
+      } else {
+        throw new Error('Failed to create alarm.');
+      }
     } catch (error) {
-      console.log('Error toggling alarm:', error);
+      console.error(error);
     }
   };
-
-
   
 
-   const pauseAlarm = () => {
-     alarm.pause();
-     setAlarmTime("");
- };
+  const updateAlarm = async (id) => {
+    try {
+      const response = await fetch(`http://localhost:5002/alarms/${id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(id),
+      });
 
-  if (alarmTime === `${hourDigital}:${minutesDigital} ${amPm}`) {
-    alarm.play(Sound);
-    alarm.loop = true;
-  }
-
+      if (response.ok) {
+        const updatedAlarmData = await response.json();
+        setAlarms((prevAlarms) =>
+          prevAlarms.map((alarm) => (alarm._id === updatedAlarmData._id ? updatedAlarmData : alarm))
+        );
+        return updatedAlarmData;
+      } else {
+        throw new Error('Failed to update alarm.');
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   const deleteAlarm = async (id) => {
     try {
-      await fetch(`http://localhost:5002/alarms/${id}`, {
-        method: "DELETE",
+      const response = await fetch(`http://localhost:5002/alarms/${id}`, {
+        method: 'DELETE',
       });
-      fetchAlarmList();
+
+      if (response.ok) {
+        setAlarms((prevAlarms) => prevAlarms.filter((alarm) => alarm._id !== id));
+      } else {
+        throw new Error('Failed to delete alarm.');
+      }
     } catch (error) {
-      console.log("Error deleting alarm:", error);
+      console.error(error);
     }
   };
 
   return (
     <StateContext.Provider
       value={{
-        hourDigital,
-        minutesDigital,
-        amPm,
-        dayNow,
-        monthNow,
-        yearNow,
-        alarmTime,
-        setAlarmTime,
-        // pauseAlarm,
-        hasAlarm,
-        setHasAlarm,
-        alarmList,
-        fetchAlarmList,
-        toggleAlarm,
+        alarms,
+        selectedAlarm,
+        setAlarms,
+        setSelectedAlarm,
+        fetchAlarms,
+        createAlarm,
+        updateAlarm,
         deleteAlarm,
       }}
     >
       {children}
     </StateContext.Provider>
   );
-}
+};
+
 

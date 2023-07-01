@@ -4,6 +4,7 @@ import Toggle from 'react-toggle';
 import 'react-toggle/style.css';
 
 
+
 export default function AlarmSingle({ alarm }) {
   const { toggleAlarm, deleteAlarm } = useContext(StateContext);
 

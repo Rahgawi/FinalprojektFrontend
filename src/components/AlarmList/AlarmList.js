@@ -1,40 +1,22 @@
-import React from "react";
-import { StateContext } from "../context/stateContext";
-import { useContext, useState, useEffect } from "react";
-import axios from "axios";
-import AlarmSingle from "./AlarmSingle";
-import AlarmOption from "../AlarmOption/AlarmOption";
-import { useSwipeable } from 'react-swipeable';
+import React, { useContext } from 'react';
+import { StateContext } from '../context/stateContext';
 
-export default function AlarmList() {
-  const {
-    
-    alarmList,
-     fetchAlarmList
-  } = useContext(StateContext);
- 
-
-  console.log("alarmList", alarmList);
-
-  useEffect(() => {
-    fetchAlarmList();
-  }, [fetchAlarmList]);
-
-
-  
-  
-
+const AlarmList = () => {
+  const { alarms } = useContext(StateContext);
 
   return (
-   
-    <div className="alarm-list">
-      {alarmList.length > 0 ? (
-        alarmList.map((alarm) => (
-          <AlarmSingle key={alarm._id} alarm={alarm} />
-        ))
-      ) : (
-        <p>No alarms found.</p>
-      )}
+    <div>
+      <h2>Alarm List</h2>
+      {alarms.map((alarm) => (
+        <div key={alarm.id}>
+          <p>Time: {alarm.time}</p>
+          <p>Days: {alarm.days.join(', ')}</p>
+          <p>Description: {alarm.description}</p>
+          <button>Delete</button>
+        </div>
+      ))}
     </div>
   );
-}
+};
+
+export default AlarmList;
