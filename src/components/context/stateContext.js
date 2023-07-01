@@ -82,15 +82,27 @@ export default function StateContextProvider ({ children }) {
 
   
 
-  const pauseAlarm = () => {
-    alarm.pause();
-    setAlarmTime("");
-  };
+   const pauseAlarm = () => {
+     alarm.pause();
+     setAlarmTime("");
+ };
 
   if (alarmTime === `${hourDigital}:${minutesDigital} ${amPm}`) {
-    alarm.play();
+    alarm.play(Sound);
     alarm.loop = true;
   }
+
+
+  const deleteAlarm = async (id) => {
+    try {
+      await fetch(`http://localhost:5002/alarms/${id}`, {
+        method: "DELETE",
+      });
+      fetchAlarmList();
+    } catch (error) {
+      console.log("Error deleting alarm:", error);
+    }
+  };
 
   return (
     <StateContext.Provider
@@ -103,12 +115,13 @@ export default function StateContextProvider ({ children }) {
         yearNow,
         alarmTime,
         setAlarmTime,
-        pauseAlarm,
+        // pauseAlarm,
         hasAlarm,
         setHasAlarm,
         alarmList,
         fetchAlarmList,
         toggleAlarm,
+        deleteAlarm,
       }}
     >
       {children}

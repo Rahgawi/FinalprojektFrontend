@@ -80,9 +80,9 @@ export default function AlarmOption() {
   //   return `${formattedHours}:${formattedMinutes} ${amPm}`;
   // };
 
-  const setAlarm = (formatTime) => {
+  const setAlarm = () => {
     if (hasAlarm) {
-      pauseAlarm();
+     
       setHasAlarm(false);
       return;
     }

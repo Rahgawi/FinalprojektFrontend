@@ -6,7 +6,7 @@ import AlarmSingle from "./AlarmSingle";
 import AlarmOption from "../AlarmOption/AlarmOption";
 import { useSwipeable } from 'react-swipeable';
 
-export default function AlarmList({}) {
+export default function AlarmList() {
   const {
     
     alarmList,
